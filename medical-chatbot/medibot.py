@@ -9,7 +9,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain_groq import ChatGroq
 
-## Uncomment the following files if you're not using pipenv as your virtual environment manager
+
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
@@ -36,14 +36,14 @@ def load_llm(huggingface_repo_id, HF_TOKEN):
     )
     return llm
 
-# ----------------- New: Friendly greetings -----------------
+
 GREETINGS = ["hi", "hello", "hey", "good morning", "good evening"]
 
 def check_greeting(user_input):
     if user_input.lower().strip() in GREETINGS:
         return "Hello! I’m MediBot 🤖. How can I help you today?"
     return None
-# ------------------------------------------------------------
+
 
 def main():
     st.title("Ask Chatbot!")
@@ -60,13 +60,13 @@ def main():
         st.chat_message('user').markdown(prompt)
         st.session_state.messages.append({'role':'user', 'content': prompt})
 
-        # ----------------- Check for greetings first -----------------
+       
         greeting_response = check_greeting(prompt)
         if greeting_response:
             st.chat_message('assistant').markdown(greeting_response)
             st.session_state.messages.append({'role':'assistant', 'content': greeting_response})
-            return  # Skip RAG if it was a greeting
-        # ------------------------------------------------------------
+            return  
+      
 
         CUSTOM_PROMPT_TEMPLATE = """
                 Use the pieces of information provided in the context to answer user's question.
@@ -79,10 +79,6 @@ def main():
                 Start the answer directly. No small talk please.
                 """
         
-        #HUGGINGFACE_REPO_ID="mistralai/Mistral-7B-Instruct-v0.3" # PAID
-        #HF_TOKEN=os.environ.get("HF_TOKEN")  
-
-        #TODO: Create a Groq API key and add it to .env file
         
         try: 
             vectorstore=get_vectorstore()
@@ -91,7 +87,7 @@ def main():
 
             qa_chain = RetrievalQA.from_chain_type(
                 llm=ChatGroq(
-                    model_name="meta-llama/llama-4-maverick-17b-128e-instruct",  # free, fast Groq-hosted model
+                    model_name="meta-llama/llama-4-maverick-17b-128e-instruct",
                     temperature=0.0,
                     groq_api_key=os.environ["GROQ_API_KEY"],
                 ),
@@ -114,3 +110,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
